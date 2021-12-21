@@ -468,16 +468,8 @@ class Guild(Hashable):
             role = Role(guild=self, data=r, state=state)
             self._roles[role.id] = role
 
-        self.emojis: Tuple[Emoji, ...] = (
-            tuple(map(lambda d: state.store_emoji(self, d), guild.get('emojis', [])))
-            if state.cache_guild_expressions
-            else ()
-        )
-        self.stickers: Tuple[GuildSticker, ...] = (
-            tuple(map(lambda d: state.store_sticker(self, d), guild.get('stickers', [])))
-            if state.cache_guild_expressions
-            else ()
-        )
+        self.emojis: Tuple[Emoji, ...] = tuple(map(lambda d: state.store_emoji(self, d), guild.get('emojis', [])))
+        self.stickers: Tuple[GuildSticker, ...] = ()
         self.features: List[GuildFeature] = guild.get('features', [])
         self._splash: Optional[str] = guild.get('splash')
         self._system_channel_id: Optional[int] = utils._get_as_snowflake(guild, 'system_channel_id')

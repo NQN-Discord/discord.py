@@ -222,6 +222,19 @@ class Thread(Messageable, Hashable):
         except KeyError:
             pass
 
+    def overwrites_for(self, obj, /) -> PermissionOverwrite:
+        parent = self.parent
+        if parent is None:
+            raise ClientException('Parent channel not found')
+        return parent.overwrites_for(obj)
+
+    @property
+    def _overwrites(self):
+        parent = self.parent
+        if parent is None:
+            raise ClientException('Parent channel not found')
+        return parent._overwrites
+
     @property
     def type(self) -> ThreadChannelType:
         """:class:`ChannelType`: The channel's Discord type."""

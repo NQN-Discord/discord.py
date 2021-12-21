@@ -114,7 +114,7 @@ class Emoji(_EmojiTag, AssetMixin):
         self._from_data(data)
 
     def _from_data(self, emoji: EmojiPayload) -> None:
-        self.require_colons: bool = emoji.get('require_colons', False)
+        self.require_colons: bool = emoji.get('require_colons', True)
         self.managed: bool = emoji.get('managed', False)
         self.id: int = int(emoji['id'])  # type: ignore # This won't be None for full emoji objects.
         self.name: str = emoji['name']  # type: ignore # This won't be None for full emoji objects.

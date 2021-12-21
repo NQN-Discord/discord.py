@@ -1407,6 +1407,46 @@ class HTTPClient:
             Route('POST', '/channels/{channel_id}/followers', channel_id=channel_id), json=payload, reason=reason
         )
 
+    def edit_webhook_message(self, webhook_id, webhook_token, message_id, thread_id=None, **fields):
+        if thread_id is None:
+            r = Route(
+                'PATCH',
+                '/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}',
+                webhook_id=webhook_id,
+                webhook_token=webhook_token,
+                message_id=message_id
+            )
+        else:
+            r = Route(
+                'PATCH',
+                '/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}?thread_id={thread_id}',
+                webhook_id=webhook_id,
+                webhook_token=webhook_token,
+                message_id=message_id,
+                thread_id=thread_id
+            )
+        return self.request(r, json=fields)
+
+    def delete_webhook_message(self, webhook_id, webhook_token, message_id, thread_id=None):
+        if thread_id is None:
+            r = Route(
+                'DELETE',
+                '/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}',
+                webhook_id=webhook_id,
+                webhook_token=webhook_token,
+                message_id=message_id
+            )
+        else:
+            r = Route(
+                'DELETE',
+                '/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}?thread_id={thread_id}',
+                webhook_id=webhook_id,
+                webhook_token=webhook_token,
+                message_id=message_id,
+                thread_id=thread_id
+            )
+        return self.request(r)
+
     # Guild management
 
     def get_guilds(

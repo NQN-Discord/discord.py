@@ -361,7 +361,7 @@ class Member(discord.abc.Messageable, _UserTag):
         self._avatar: Optional[str] = data.get('avatar')
         self._banner: Optional[str] = data.get('banner')
         self._permissions: Optional[int]
-        self._flags: int = data['flags']
+        self._flags: int = data.get('flags', 0)
         self._avatar_decoration_data: Optional[AvatarDecorationData] = data.get('avatar_decoration_data')
         try:
             self._permissions = int(data['permissions'])
