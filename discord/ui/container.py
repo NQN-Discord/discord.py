@@ -24,6 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
+import asyncio
 import copy
 from typing import (
     TYPE_CHECKING,
@@ -233,6 +234,10 @@ class Container(Item[V]):
     def _is_v2(self) -> bool:
         return True
 
+    async def serialise(self, ctx) -> Dict[str, Any]:
+        components = await asyncio.gather(*[child.serialise(ctx) for child in self._children])
+        return self._to_component_dict(components)
+
     def to_components(self) -> List[Dict[str, Any]]:
         components = []
         for i in self._children:
@@ -241,7 +246,9 @@ class Container(Item[V]):
 
     def to_component_dict(self) -> Dict[str, Any]:
         components = self.to_components()
+        return self._to_component_dict(components)
 
+    def _to_component_dict(self, components: List[Dict[str, Any]]):
         colour = None
         if self._colour:
             colour = self._colour if isinstance(self._colour, int) else self._colour.value
@@ -306,14 +313,14 @@ class Container(Item[V]):
         ValueError
             Maximum number of children has been exceeded (40) for the entire view.
         """
-        if not isinstance(item, Item):
-            raise TypeError(f'expected Item not {item.__class__.__name__}')
+        # if not isinstance(item, Item):
+        #     raise TypeError(f'expected Item not {item.__class__.__name__}')
 
         if self._view:
             self._view._add_count(item._total_count)
 
         self._children.append(item)
-        item._update_view(self.view)
+        # item._update_view(self.view)
         item._parent = self
         return self
 

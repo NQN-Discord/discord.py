@@ -110,6 +110,9 @@ class Item(Generic[V]):
         self._id: Optional[int] = None
         self._parent: Optional[Item] = None
 
+    async def serialise(self, ctx) -> Dict[str, Any]:
+        return self.to_component_dict()
+
     def to_component_dict(self) -> Dict[str, Any]:
         raise NotImplementedError
 

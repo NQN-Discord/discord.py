@@ -381,16 +381,10 @@ class ConnectionState(Generic[ClientT]):
         for vc in self.voice_clients:
             vc.main_ws = ws  # type: ignore # Silencing the unknown attribute (ok at runtime).
 
-    def store_user(self, data: Union[UserPayload, PartialUserPayload], *, cache: bool = True) -> User:
-        # this way is 300% faster than `dict.setdefault`.
-        user_id = int(data['id'])
-        try:
-            return self._users[user_id]
-        except KeyError:
-            user = User(state=self, data=data)
-            if cache:
-                self._users[user_id] = user
-            return user
+    def store_user(self, data: UserPayload) -> User:
+        if isinstance(data, User):
+            return data
+        return User(state=self, data=data)
 
     def store_user_no_intents(self, data: Union[UserPayload, PartialUserPayload], *, cache: bool = True) -> User:
         return User(state=self, data=data)
@@ -402,18 +396,13 @@ class ConnectionState(Generic[ClientT]):
         return self._users.get(id)
 
     def store_emoji(self, guild: Guild, data: EmojiPayload) -> Emoji:
-        # the id will be present here
-        emoji_id = int(data['id'])  # type: ignore
-        self._emojis[emoji_id] = emoji = Emoji(guild=guild, state=self, data=data)
-        return emoji
+        return Emoji(guild=guild, state=self, data=data)
 
     def store_sticker(self, guild: Guild, data: GuildStickerPayload) -> GuildSticker:
-        sticker_id = int(data['id'])
-        self._stickers[sticker_id] = sticker = GuildSticker(state=self, data=data)
-        return sticker
+        pass
 
-    def store_view(self, view: BaseView, message_id: Optional[int] = None) -> None:
-        self._view_store.add_view(view, message_id)
+    def store_view(self, view: BaseView, message_id: Optional[int] = None, interaction_id: Optional[int] = None) -> None:
+        pass
 
     def prevent_view_updates_for(self, message_id: int) -> Optional[BaseView]:
         return self._view_store.remove_message_tracking(message_id)

@@ -63,6 +63,7 @@ from .guild import Guild
 from .mixins import Hashable
 from .sticker import StickerItem, GuildSticker
 from .threads import Thread
+from .user import User
 from .channel import PartialMessageable
 from .poll import Poll
 
@@ -2449,11 +2450,7 @@ class Message(PartialMessage, Hashable):
         self.nonce = value
 
     def _handle_author(self, author: UserPayload) -> None:
-        self.author = self._state.store_user(author, cache=self.webhook_id is None)
-        if isinstance(self.guild, Guild):
-            found = self.guild.get_member(self.author.id)
-            if found is not None:
-                self.author = found
+        self.author = User(state=self._state, data=author)
 
     def _handle_member(self, member: MemberPayload) -> None:
         # The gateway now gives us full Member objects sometimes with the following keys
@@ -2494,7 +2491,7 @@ class Message(PartialMessage, Hashable):
                 if role is not None:
                     self.role_mentions.append(role)
 
-    def _handle_components(self, data: List[ComponentPayload]) -> None:
+    def _handle_components(self, data: List[ComponentPayload]):
         self.components = []
 
         for component_data in data:

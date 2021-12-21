@@ -187,7 +187,7 @@ class Section(Item[V]):
             self._view._add_count(1)
 
         item = item if isinstance(item, Item) else TextDisplay(item)
-        item._update_view(self.view)
+        # item._update_view(self.view)
         item._parent = self
         self._children.append(item)
 
@@ -258,6 +258,10 @@ class Section(Item[V]):
 
         return self
 
+    async def serialise(self, ctx) -> Dict[str, Any]:
+        accessory = await self.accessory.serialise(ctx)
+        return self._to_component_dict(accessory)
+
     def to_components(self) -> List[Dict[str, Any]]:
         components = []
 
@@ -266,10 +270,13 @@ class Section(Item[V]):
         return components
 
     def to_component_dict(self) -> Dict[str, Any]:
+        return self._to_component_dict(self.accessory.to_component_dict())
+
+    def _to_component_dict(self, accessory) -> Dict[str, Any]:
         data = {
             'type': self.type.value,
             'components': self.to_components(),
-            'accessory': self.accessory.to_component_dict(),
+            'accessory': accessory,
         }
         if self.id is not None:
             data['id'] = self.id

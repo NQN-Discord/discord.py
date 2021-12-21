@@ -272,7 +272,7 @@ class ActionRow(Item[V]):
         if self._view:
             self._view._add_count(1)
 
-        item._update_view(self.view)
+        # item._update_view(self.view)
         item._parent = self
         self._weight += 1
         self._children.append(item)

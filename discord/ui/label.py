@@ -109,11 +109,17 @@ class Label(Item[V]):
     def walk_children(self) -> Generator[Item[V], None, None]:
         yield self.component
 
+    async def serialise(self, ctx) -> LabelComponentPayload:
+        return self._serialise(await self.component.serialise(ctx))
+
     def to_component_dict(self) -> LabelComponentPayload:
+        return self._serialise(self.component.to_component_dict())
+
+    def _serialise(self, serialised_component) -> LabelComponentPayload:
         payload: LabelComponentPayload = {
             'type': ComponentType.label.value,
             'label': self.text,
-            'component': self.component.to_component_dict(),  # type: ignore
+            'component': serialised_component,  # type: ignore
         }
         if self.description:
             payload['description'] = self.description

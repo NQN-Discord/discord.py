@@ -180,6 +180,9 @@ class Component:
     def to_dict(self) -> ComponentPayload:
         raise NotImplementedError
 
+    async def serialise(self, ctx) -> ComponentPayload:
+        return self.to_dict()
+
 
 class BaseOption:
     """Represents a base option for components that have options.
